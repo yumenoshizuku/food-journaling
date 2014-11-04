@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		501EAC451A086416003A1A52 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501EAC441A086416003A1A52 /* MobileCoreServices.framework */; };
+		501EAC471A08942C003A1A52 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501EAC461A08942C003A1A52 /* Foundation.framework */; };
+		501EAC491A089431003A1A52 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501EAC481A089431003A1A52 /* UIKit.framework */; };
+		501EAC4B1A089436003A1A52 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 501EAC4A1A089436003A1A52 /* CoreGraphics.framework */; };
+		501EAC4F1A08976D003A1A52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 501EAC4E1A08976D003A1A52 /* Main.storyboard */; };
 		509527BA19FCA45100380001 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 509527B919FCA45100380001 /* main.m */; };
 		509527BD19FCA45100380001 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 509527BC19FCA45100380001 /* AppDelegate.m */; };
 		509527C519FCA45100380001 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 509527C419FCA45100380001 /* Images.xcassets */; };
@@ -14,7 +19,6 @@
 		509527D419FCA45100380001 /* You_re_Gonna_Love_It_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 509527D319FCA45100380001 /* You_re_Gonna_Love_It_Tests.m */; };
 		509527E319FCAB3200380001 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509527E219FCAB3200380001 /* FacebookSDK.framework */; };
 		5095282C19FD936500380001 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5095282A19FD936500380001 /* ViewController.m */; };
-		5095282D19FD936500380001 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5095282B19FD936500380001 /* ViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +32,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		501EAC441A086416003A1A52 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		501EAC461A08942C003A1A52 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		501EAC481A089431003A1A52 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		501EAC4A1A089436003A1A52 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		501EAC4E1A08976D003A1A52 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		509527B419FCA45100380001 /* You’re Gonna Love It!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "You’re Gonna Love It!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		509527B819FCA45100380001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		509527B919FCA45100380001 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -41,7 +50,6 @@
 		509527E219FCAB3200380001 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../../FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		5095282919FD936500380001 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		5095282A19FD936500380001 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		5095282B19FD936500380001 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +57,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				501EAC4B1A089436003A1A52 /* CoreGraphics.framework in Frameworks */,
+				501EAC491A089431003A1A52 /* UIKit.framework in Frameworks */,
+				501EAC471A08942C003A1A52 /* Foundation.framework in Frameworks */,
+				501EAC451A086416003A1A52 /* MobileCoreServices.framework in Frameworks */,
 				509527E319FCAB3200380001 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,7 +104,7 @@
 				509527B719FCA45100380001 /* Supporting Files */,
 				5095282919FD936500380001 /* ViewController.h */,
 				5095282A19FD936500380001 /* ViewController.m */,
-				5095282B19FD936500380001 /* ViewController.xib */,
+				501EAC4E1A08976D003A1A52 /* Main.storyboard */,
 			);
 			path = "You’re Gonna Love It!";
 			sourceTree = "<group>";
@@ -126,6 +138,10 @@
 		509527DF19FCA80600380001 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				501EAC4A1A089436003A1A52 /* CoreGraphics.framework */,
+				501EAC481A089431003A1A52 /* UIKit.framework */,
+				501EAC461A08942C003A1A52 /* Foundation.framework */,
+				501EAC441A086416003A1A52 /* MobileCoreServices.framework */,
 				509527E219FCAB3200380001 /* FacebookSDK.framework */,
 			);
 			name = Frameworks;
@@ -212,7 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				509527C819FCA45100380001 /* LaunchScreen.xib in Resources */,
-				5095282D19FD936500380001 /* ViewController.xib in Resources */,
+				501EAC4F1A08976D003A1A52 /* Main.storyboard in Resources */,
 				509527C519FCA45100380001 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -347,6 +363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Fanxing Meng (6XGVTE486S)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/albert/Documents/FacebookSDK,
@@ -361,6 +378,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Fanxing Meng (6XGVTE486S)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/albert/Documents/FacebookSDK,

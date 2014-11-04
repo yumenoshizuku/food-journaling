@@ -26,7 +26,10 @@
     // Override point for customization after application launch.
     
     // Create a LoginUIViewController instance where we will put the login button
-    ViewController *customLoginViewController = [[ViewController alloc] init];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ViewController *customLoginViewController = [storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+
+    //ViewController *customLoginViewController = [[ViewController alloc] init];
     self.customLoginViewController = customLoginViewController;
     
     // Set loginUIViewController as root view controller
@@ -60,7 +63,6 @@
 - (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
 {
     UILabel *nameLabel = self.customLoginViewController.nameLabel;
-    UILabel *emailLabel = self.customLoginViewController.emailLabel;
     //FBProfilePictureView *profilePictureView = self.customLoginViewController.profilePictureView;
     // If the session was opened successfully
     if (!error && state == FBSessionStateOpen){
@@ -78,7 +80,7 @@
                      NSString *facebookId = user.id;
                      NSString *email = [user objectForKey:@"email"];
                      nameLabel.text = name;
-                     emailLabel.text = email;
+                     //emailLabel.text = email;
                      //profilePictureView.profileID = facebookId;
                  }
              }];
@@ -93,7 +95,6 @@
         // Show the user the logged-out UI
         [self userLoggedOut];
         nameLabel.text = @"";
-        emailLabel.text = @"";
         //profilePictureView.profileID = nil;
     }
     

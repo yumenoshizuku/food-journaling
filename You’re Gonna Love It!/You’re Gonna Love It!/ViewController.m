@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "AppDelegate.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface ViewController ()
@@ -15,7 +16,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *dishName;
 @property (weak, nonatomic) IBOutlet UISlider *dishRating;
 @property (weak, nonatomic) IBOutlet UITextView *dishComment;
-
+@property (weak, nonatomic) IBOutlet UIImageView *dishPicture;
+@property (nonatomic) UIImagePickerController *cameraUI;
+@property (strong, nonatomic) UIImage *capturedImage;
 @end
 
 @implementation ViewController
@@ -68,6 +71,73 @@
     NSString *comment = self.dishComment.text;
 }
 
+
+- (IBAction) showCameraUI {
+    [self startCameraControllerFromViewController: self
+                                    usingDelegate: self];
+}
+
+// For responding to the user tapping Cancel.
+- (void) imagePickerControllerDidCancel: (UIImagePickerController *) picker {
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+// For responding to the user accepting a newly-captured picture or movie
+- (void) imagePickerController: (UIImagePickerController *) picker
+ didFinishPickingMediaWithInfo: (NSDictionary *) info {
+    
+    UIImage *originalImage, *editedImage, *imageToSave;
+    
+    // Handle a still image capture
+    
+    editedImage = (UIImage *) [info objectForKey:
+                               UIImagePickerControllerEditedImage];
+    originalImage = (UIImage *) [info objectForKey:
+                                 UIImagePickerControllerOriginalImage];
+    
+    if (editedImage) {
+        imageToSave = editedImage;
+    } else {
+        imageToSave = originalImage;
+    }
+    self.capturedImage = imageToSave;
+    // Save the new image (original or edited) to the Camera Roll
+    UIImageWriteToSavedPhotosAlbum (imageToSave, nil, nil , nil);
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    [self.dishPicture setImage:self.capturedImage];
+    self.cameraUI = nil;
+}
+
+- (BOOL) startCameraControllerFromViewController: (UIViewController*) controller
+                                   usingDelegate: (id <UIImagePickerControllerDelegate,
+                                                   UINavigationControllerDelegate>) delegate {
+    
+    if (([UIImagePickerController isSourceTypeAvailable:
+          UIImagePickerControllerSourceTypeCamera] == NO)
+        || (delegate == nil)
+        || (controller == nil))
+        return NO;
+    
+    
+    UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
+    cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
+    cameraUI.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeImage, nil];
+    // Displays a control that allows the user to choose picture or
+    // movie capture, if both are available:
+    cameraUI.mediaTypes =
+    [UIImagePickerController availableMediaTypesForSourceType:
+     UIImagePickerControllerSourceTypeCamera];
+    
+    // Hides the controls for moving & scaling pictures, or for
+    // trimming movies. To instead show the controls, use YES.
+    cameraUI.allowsEditing = YES;
+    
+    cameraUI.delegate = delegate;
+    
+    [controller presentModalViewController: cameraUI animated: YES];
+    return YES;
+}
 
 //- (void)viewDidLoad {
 //    [super viewDidLoad];

@@ -12,6 +12,9 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface ViewController ()
+@property (strong, nonatomic) NSString *csrf;
+@property (weak, nonatomic) IBOutlet UITextField *password;
+@property (weak, nonatomic) IBOutlet UITextField *username;
 @property (weak, nonatomic) IBOutlet UITextField *restaurantName;
 @property (weak, nonatomic) IBOutlet UITextField *dishName;
 @property (weak, nonatomic) IBOutlet UISlider *dishRating;
@@ -20,6 +23,7 @@
 @property (nonatomic) UIImagePickerController *cameraUI;
 @property (strong, nonatomic) UIImage *capturedImage;
 @end
+static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
 
 @implementation ViewController
 - (IBAction)buttonTouched:(id)sender
@@ -49,26 +53,157 @@
     }
 }
 
+
+- (NSString *)CSRFTokenFromURL:(NSString *)url
+{
+    // Pass in any url with a CSRF protected form
+    NSURL *baseURL = [NSURL URLWithString:url];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:baseURL];
+    [request setHTTPMethod:@"GET"];
+    NSURLResponse *response;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:baseURL];
+    for (NSHTTPCookie *cookie in cookies)
+    {
+        if ([[cookie name] isEqualToString:@"csrftoken"])
+            return [cookie value];
+    }
+    return nil;
+}
+
+
+
+- (IBAction)login:(id)sender {
+    NSString *username = self.username.text;
+    NSString *password = self.password.text;
+
+    self.csrf = [self CSRFTokenFromURL:@"http://54.165.239.201:8000/rango/login"];
+    
+    NSString *bodyData = [NSString stringWithFormat:@"username=%@&password=%@&csrfmiddlewaretoken=%@", username, password, self.csrf];
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://54.165.239.201:8000/rango/login"]];
+    NSLog(bodyData);
+    [postRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
+    // Designate the request a POST request and specify its body data
+    [postRequest setHTTPMethod:@"POST"];
+    //[postRequest setDefaultHeader:@"X-CSRFToken" value:csrf];
+    [postRequest setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    
+    [NSURLConnection sendAsynchronousRequest:postRequest queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSLog(@"%@", response);
+         NSLog(@"%@", error);
+         NSString* responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+         //NSLog(@"%@",responseString);
+     }];
+
+}
+
 - (IBAction)submitReview:(id)sender {
     if (FBSession.activeSession.isOpen) {
-        
         [[FBRequest requestForMe] startWithCompletionHandler:
          ^(FBRequestConnection *connection,
            NSDictionary<FBGraphUser> *user,
            NSError *error) {
              if (!error) {
-                 NSString *firstName = user.first_name;
-                 NSString *lastName = user.last_name;
-                 NSString *facebookId = user.id;
-                 NSString *email = [user objectForKey:@"email"];
-                 NSString *imageUrl = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+//                 NSString *firstName = user.first_name;
+//                 NSString *lastName = user.last_name;
+//                 NSString *facebookId = user.id;
+//                 NSString *email = [user objectForKey:@"email"];
+//                 NSString *imageUrl = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+                 
+                 
+                 NSString *restaurant = self.restaurantName.text;
+                 NSString *dish = self.dishName.text;
+                 NSInteger *rating = (NSInteger)roundf(self.dishRating.value);
+                 NSString *comment = self.dishComment.text;
+                 
+                 
+                 
+                 NSString *bodyData = [NSString stringWithFormat:@"csrfmiddlewaretoken=%@&restaurant=%@&dish=%@&rate=%ld&comment=%@&address＝curr_position&city_state=New York, NY", self.csrf, restaurant, dish, rating, comment];
+                 NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://54.165.239.201:8000/rango/upload"]];
+                 NSLog(bodyData);
+                 [postRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+                 
+                 // Designate the request a POST request and specify its body data
+                 [postRequest setHTTPMethod:@"POST"];
+                 
+                 
+                 
+                 
+//                 
+//                 
+//                 // set Content-Type in HTTP header
+//                 NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+//                 [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+//                 
+//                 // post body
+//                 NSMutableData *body = [NSMutableData data];
+//                 
+//                 // add params (all params are strings)
+//                 for (NSString *param in _params) {
+//                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+//                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+//                     [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+//                 }
+//                 
+//                 // add image data
+//                 NSData *imageData = UIImageJPEGRepresentation(self.capturedImage, 1.0);
+//                 if (imageData) {
+//                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+//                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+//                     [body appendData:[[NSString stringWithString:@"Content-Type: image/jpeg\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+//                     [body appendData:imageData];
+//                     [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+//                 }
+//                 
+//                 [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+//
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 [postRequest setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
+                 
+                 
+                 
+                 NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+                 
+                 [NSURLConnection sendAsynchronousRequest:postRequest queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+                  {
+                      NSLog(@"%@", response);
+                      NSLog(@"%@", error);
+                      NSString* responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                      NSLog(@"%@",responseString);
+                  }];
+                 
+/*
+                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://54.165.239.201:8000/rango/login_mobile"]
+                                                                        cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                                    timeoutInterval:10];
+                 [request setHTTPMethod: @"GET"];
+                 NSError *requestError;
+                 NSURLResponse *urlResponse = nil;
+                 NSData *response1 = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&requestError];
+                 NSLog(@"%@", urlResponse);
+                 NSString* responseString = [[NSString alloc] initWithData:response1 encoding:NSUTF8StringEncoding];
+                 NSLog(@"%@",responseString);
+                 */
              }
          }];
     }
-    NSString *restaurant = self.restaurantName.text;
-    NSString *dish = self.dishName.text;
-    NSInteger *rating = (NSInteger)roundf(self.dishRating.value);
-    NSString *comment = self.dishComment.text;
+    
 }
 
 
@@ -138,7 +273,6 @@
     [controller presentModalViewController: cameraUI animated: YES];
     return YES;
 }
-
 //- (void)viewDidLoad {
 //    [super viewDidLoad];
 //    // Do any additional setup after loading the view from its nib.

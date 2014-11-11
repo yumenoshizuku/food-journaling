@@ -22,6 +22,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
@@ -53,8 +54,8 @@
         
         // If there's no cached session, we will show a login button
     } else {
-        UIButton *loginButton = [self.customLoginViewController loginButton];
-        [loginButton setTitle:@"Log in with Facebook" forState:UIControlStateNormal];
+        //UIButton *loginButton = [self.customLoginViewController loginButton];
+        //[loginButton setTitle:@"Log in with Facebook" forState:UIControlStateNormal];
     }
     return YES;
 }
@@ -62,7 +63,7 @@
 // This method will handle ALL the session state changes in the app
 - (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
 {
-    UILabel *nameLabel = self.customLoginViewController.nameLabel;
+    //UILabel *nameLabel = self.customLoginViewController.nameLabel;
     //FBProfilePictureView *profilePictureView = self.customLoginViewController.profilePictureView;
     // If the session was opened successfully
     if (!error && state == FBSessionStateOpen){
@@ -79,7 +80,7 @@
                      NSString *name = user.name;
                      NSString *facebookId = user.id;
                      NSString *email = [user objectForKey:@"email"];
-                     nameLabel.text = name;
+                     //nameLabel.text = name;
                      //emailLabel.text = email;
                      //profilePictureView.profileID = facebookId;
                  }
@@ -94,7 +95,7 @@
         NSLog(@"Session closed");
         // Show the user the logged-out UI
         [self userLoggedOut];
-        nameLabel.text = @"";
+        //nameLabel.text = @"";
         //profilePictureView.profileID = nil;
     }
     
@@ -143,8 +144,8 @@
 - (void)userLoggedOut
 {
     // Set the button title as "Log in with Facebook"
-    UIButton *loginButton = [self.customLoginViewController loginButton];
-    [loginButton setTitle:@"Log in with Facebook" forState:UIControlStateNormal];
+    //UIButton *loginButton = [self.customLoginViewController loginButton];
+    //[loginButton setTitle:@"Log in with Facebook" forState:UIControlStateNormal];
     
     // Confirm logout message
     //[self showMessage:@"You're now logged out" withTitle:@""];
@@ -154,8 +155,8 @@
 - (void)userLoggedIn
 {
     // Set the button title as "Log out"
-    UIButton *loginButton = self.customLoginViewController.loginButton;
-    [loginButton setTitle:@"Log out" forState:UIControlStateNormal];
+    //UIButton *loginButton = self.customLoginViewController.loginButton;
+    //[loginButton setTitle:@"Log out" forState:UIControlStateNormal];
     
     
     // Welcome message

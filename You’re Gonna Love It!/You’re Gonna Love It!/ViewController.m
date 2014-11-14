@@ -13,6 +13,9 @@
 
 @interface ViewController ()
 @property (strong, nonatomic) NSString *csrf;
+@property (strong, nonatomic) NSString *csrf_upload;
+@property (strong, nonatomic) NSArray *cookies;
+@property (strong, nonatomic) NSHTTPCookieStorage *cookieJar;
 @property (weak, nonatomic) IBOutlet UITextField *password;
 @property (weak, nonatomic) IBOutlet UITextField *username;
 @property (weak, nonatomic) IBOutlet UITextField *restaurantName;
@@ -23,7 +26,6 @@
 @property (nonatomic) UIImagePickerController *cameraUI;
 @property (strong, nonatomic) UIImage *capturedImage;
 @end
-static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
 
 @implementation ViewController
 - (IBAction)buttonTouched:(id)sender
@@ -62,8 +64,8 @@ static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
     [request setHTTPMethod:@"GET"];
     NSURLResponse *response;
     [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:baseURL];
-    for (NSHTTPCookie *cookie in cookies)
+    self.cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:baseURL];
+    for (NSHTTPCookie *cookie in self.cookies)
     {
         if ([[cookie name] isEqualToString:@"csrftoken"])
             return [cookie value];
@@ -81,7 +83,7 @@ static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
     
     NSString *bodyData = [NSString stringWithFormat:@"username=%@&password=%@&csrfmiddlewaretoken=%@", username, password, self.csrf];
     NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://54.165.239.201:8000/rango/login"]];
-    NSLog(bodyData);
+    NSLog(@"%@", bodyData);
     [postRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     
     // Designate the request a POST request and specify its body data
@@ -97,6 +99,12 @@ static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
          NSLog(@"%@", error);
          NSString* responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
          //NSLog(@"%@",responseString);
+         
+         self.csrf_upload = [self CSRFTokenFromURL:@"http://54.165.239.201:8000/rango/upload"];
+         self.cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+         for (NSHTTPCookie*cookie in [self.cookieJar cookies]) {
+             NSLog(@"%@", cookie);
+         }
      }];
 
 }
@@ -117,70 +125,85 @@ static NSString *token = @"m4EHti8MHlwququo0Lb3N7bHcQz7zJ1x";
                  
                  NSString *restaurant = self.restaurantName.text;
                  NSString *dish = self.dishName.text;
-                 NSInteger *rating = (NSInteger)roundf(self.dishRating.value);
+                 NSInteger rating = (NSInteger)roundf(self.dishRating.value);
                  NSString *comment = self.dishComment.text;
+                 NSString *rate = [NSString stringWithFormat: @"%ld", rating];
                  
                  
-                 
-                 NSString *bodyData = [NSString stringWithFormat:@"csrfmiddlewaretoken=%@&restaurant=%@&dish=%@&rate=%ld&comment=%@&address＝curr_position&city_state=New York, NY", self.csrf, restaurant, dish, rating, comment];
-                 NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://54.165.239.201:8000/rango/upload"]];
-                 NSLog(bodyData);
-                 [postRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-                 
-                 // Designate the request a POST request and specify its body data
-                 [postRequest setHTTPMethod:@"POST"];
-                 
-                 
-                 
-                 
+//                 NSString *bodyData = [NSString stringWithFormat:@"csrfmiddlewaretoken=%@&restaurant=%@&dish=%@&rate=%ld&comment=%@&address＝curr_position&city_state=New York, NY", self.csrf, restaurant, dish, rating, comment];
 //                 
-//                 
-//                 // set Content-Type in HTTP header
-//                 NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
-//                 [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
-//                 
-//                 // post body
-//                 NSMutableData *body = [NSMutableData data];
-//                 
-//                 // add params (all params are strings)
-//                 for (NSString *param in _params) {
-//                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-//                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
-//                     [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
-//                 }
-//                 
-//                 // add image data
-//                 NSData *imageData = UIImageJPEGRepresentation(self.capturedImage, 1.0);
-//                 if (imageData) {
-//                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-//                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-//                     [body appendData:[[NSString stringWithString:@"Content-Type: image/jpeg\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-//                     [body appendData:imageData];
-//                     [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-//                 }
-//                 
-//                 [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-//
+//                 NSLog(bodyData);
+   
+                 //NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys: self.csrf_upload, @"csrfmiddlewaretoken", restaurant, @"restaurant", dish, @"dish", rate, @"rate", comment, @"comment", @"curr_position", @"address", @"New York, NY", @"city_state", nil];
                  
                  
                  
                  
+                 // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+                 NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
+                 [_params setObject:self.csrf_upload forKey:@"csrfmiddlewaretoken"];
+                 [_params setObject:restaurant forKey:@"restaurant"];
+                 [_params setObject:[NSString stringWithFormat:@"%@", dish] forKey:@"dish"];
+                 [_params setObject:[NSString stringWithFormat:@"%@", rate] forKey:@"rate"];
+                 [_params setObject:[NSString stringWithFormat:@"%@", comment] forKey:@"comment"];
+                 [_params setObject:@"curr_position" forKey:@"address"];
+                 [_params setObject:@"New York, NY" forKey:@"city_state"];
+                 
+                 // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
+                 NSString *boundary = @"----------V2ymHFg03ehbqgZCaKO6jy";
+                 
+                 // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
+                 NSString* FileParamConstant = @"image";
+                 
+                 // the server url to which the image (or the media) is uploaded. Use your server url here
+                 NSURL* requestURL = [NSURL URLWithString:@"http://54.165.239.201:8000/rango/upload_mobile"];
+                 
+                 // create request
+                 NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+                 // set URL
+                 [request setURL:requestURL];
+                 [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+                 [request setHTTPShouldHandleCookies:YES];
+                 [request setTimeoutInterval:30];
+                 [request setHTTPMethod:@"POST"];
                  
                  
+                 // set Content-Type in HTTP header
+                 NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+                 [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+                 
+                 // post body
+                 NSMutableData *body = [NSMutableData data];
+                 
+                 // add params (all params are strings)
+                 for (NSString *param in _params) {
+                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+                 }
+                 // add image data
+                 NSData *imageData = UIImageJPEGRepresentation(self.capturedImage, 1.0);
+                 if (imageData) {
+                     [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                     [body appendData:imageData];
+                     [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+                 }
                  
                  
+                 [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
                  
-                 
-                 
-                 
-                 
-                 [postRequest setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
-                 
-                 
+                 // setting the body of the post to the reqeust
+                 [request setHTTPBody:body];
+                 // set the content-length
+                 NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
+                 NSLog(postLength);
+                 [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
                  
                  NSOperationQueue *queue = [[NSOperationQueue alloc] init];
                  
-                 [NSURLConnection sendAsynchronousRequest:postRequest queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+                 [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
                   {
                       NSLog(@"%@", response);
                       NSLog(@"%@", error);

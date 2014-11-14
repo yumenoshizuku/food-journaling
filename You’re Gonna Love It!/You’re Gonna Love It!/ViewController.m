@@ -198,6 +198,7 @@
                  [request setHTTPBody:body];
                  // set the content-length
                  NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
+
                  [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
                  
                  NSOperationQueue *queue = [[NSOperationQueue alloc] init];
